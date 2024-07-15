@@ -13,6 +13,7 @@ pipeline {
         }
         
         //build with docker
+        /*
         stage('Build') {
             agent {
                 docker {
@@ -21,7 +22,7 @@ pipeline {
                 }
             }
             steps {
-                /*
+                
                 sh '''
                     echo "This time with Docker"
                     ls -latr
@@ -31,7 +32,8 @@ pipeline {
                     npm ci
                     npm run build
                 '''
-                */
+                
+
                 sh '''
                     npx playwright install
                     npm install serve
@@ -39,20 +41,49 @@ pipeline {
                     sleep 10
                     npx playwright test
                 '''
+                
                 //The server installaton can be done without the -g (global) tag
             }
         }
-        /*
-        stage('Test') {
-            steps {
-                sh '''
-                    test -f build/index.html
-                    ls build/index*
-                    npm test
-                '''
+        */
+
+        stage('Run Tests') {
+            parallel {
+                
+                agent {
+                    docker {
+                        image 'node:18-alpine'   
+                        reuseNode true
+                    }
+                }
+                stage('Test') {
+                    steps {
+                        sh '''
+                            test -f build/index.html
+                            ls build/index*
+                            npm test
+                        '''
+                    }
+                }
+                post {
+                    always {
+                        junit 'test-results/junit.xml'
+                    }
+                }
+                
+                /*
+                stage('E2E test') {
+                    sh '''
+                        npx playwright install
+                        npm install serve
+                        node_modules/.bin/serve -s build &
+                        sleep 10
+                        npx playwright test
+                    '''
+                }
+                */
             }
         }
-        */
     }
     /*
     post {
