@@ -2,6 +2,7 @@ pipeline {
     agent any
     
     stages {
+        /*
         stage('w/o docker') {
             steps {
                 sh '''
@@ -32,9 +33,11 @@ pipeline {
                 '''
             }
         }
+        */
         stage('Test') {
             steps {
                 sh '''
+                    npm test
                     ls build/index*
                 '''
             }
