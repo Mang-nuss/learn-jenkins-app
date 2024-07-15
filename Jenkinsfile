@@ -21,6 +21,7 @@ pipeline {
                 }
             }
             steps {
+                /*
                 sh '''
                     echo "This time with Docker"
                     ls -latr
@@ -29,6 +30,12 @@ pipeline {
                     node --version
                     npm ci
                     npm run build
+                '''
+                */
+                sh '''
+                    npm install -g serve
+                    serve -s build
+                    npx playwright test
                 '''
             }
         }
