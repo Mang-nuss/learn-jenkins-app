@@ -39,6 +39,7 @@ pipeline {
                 sh '''
                     test -f build/index.html
                     ls build/index*
+                    npm test
                 '''
             }
         }
