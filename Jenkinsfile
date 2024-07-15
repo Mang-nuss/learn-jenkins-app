@@ -71,8 +71,9 @@ pipeline {
                     }
                 }
                 
-                /*
+                
                 stage('E2E test') {
+                    /*
                     sh '''
                         npx playwright install
                         npm install serve
@@ -80,8 +81,9 @@ pipeline {
                         sleep 10
                         npx playwright test
                     '''
+                    */
                 }
-                */
+                
             }
         }
     }
