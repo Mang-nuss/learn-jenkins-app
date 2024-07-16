@@ -115,12 +115,11 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install netlify-cli node-jq
-                    node_modules/.bin/netlify --version
+                    netlify --version
                     echo "deploying to STAGING site with ID: $NETLIFY_SITE_ID"
-                    node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --json > staging_output.json
-                    node_modules/.bin/node-jq -r '.deploy_url' staging_output.json
+                    netlify status
+                    netlify deploy --dir=build --json > staging_output.json
+                    node-jq -r '.deploy_url' staging_output.json
                 '''
                 script {
                     env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' staging_output.json", returnStdout: true)
@@ -140,10 +139,9 @@ pipeline {
                 CI_ENVIRONMENT_URL = 'TOFIX' //soon should be STAGING URL
             }
 
+            //#npx playwright install #npm install serve
             steps {
                 sh '''
-                    #npx playwright install
-                    #npm install serve
                     node_modules/.bin/serve -s build &
                     sleep 10
                     npx playwright test
