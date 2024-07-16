@@ -17,9 +17,10 @@ pipeline {
                     args "--entrypoint=''"
                 }
             }
-            steps {
+            steps { //trying out the aws CLI commands
                 sh '''
                     aws --version
+                    aws s3 ls
                 '''
             }
         }
