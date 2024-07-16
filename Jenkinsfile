@@ -5,19 +5,25 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = 'fd1215fe-8aca-440f-bad4-22f450f88ecb'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-        REACT_APP_VERSION = '1.2.3'
+        REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     
     stages {
-        stage('w/o docker') {
+
+        stage('Docker') {
             steps {
-                sh '''
-                    echo "Without Docker"
-                    ls -latr
-                    touch container-nope.txt
-                '''
+                sh 'docker build -t my-playwright .' //build this in the current dir.
             }
         }
+        // stage('w/o docker') {
+        //     steps {
+        //         sh '''
+        //             echo "Without Docker"
+        //             ls -latr
+        //             touch container-nope.txt
+        //         '''
+        //     }
+        // }
         
         //build with docker
         /*
