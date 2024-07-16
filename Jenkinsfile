@@ -18,10 +18,14 @@ pipeline {
                 }
             }
             steps { //trying out the aws CLI commands
-                sh '''
-                    aws --version
-                    aws s3 ls
-                '''
+
+                withCredentials([usernamePassword(credentialsId: 'my_jenkins_aws_id', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    // some block
+                    sh '''
+                        aws --version
+                        aws s3 ls
+                    '''
+                }
             }
         }
 
