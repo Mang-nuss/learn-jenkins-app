@@ -117,6 +117,34 @@ pipeline {
                 '''
             }
         }
+
+        stage('Staging E2E test') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL = 'TOFIX'
+            }
+
+            steps {
+                sh '''
+                    #npx playwright install
+                    #npm install serve
+                    node_modules/.bin/serve -s build &
+                    sleep 10
+                    npx playwright test
+                '''
+            }
+            post {
+                always {
+                    echo 'post section of staging E2E'
+                }
+            }
+        } 
         
         stage('Approval') {
             steps {
@@ -152,22 +180,25 @@ pipeline {
                     reuseNode true
                 }
             }
+
+            environment {
+                CI_ENVIRONMENT_URL = 'TOFIX'
+            }
             steps {
                 sh '''
                     #npx playwright install
-                    npm install serve
-                    node_modules/.bin/serve -s build &
-                    sleep 10
+                    #npm install serve
+                    #node_modules/.bin/serve -s build &
+                    #sleep 10
                     npx playwright test
                 '''
             }
+            post {
+                always {
+                    echo 'post section for prod E2E'
+                    //junit 'test-results/junit.xml'
+                }
+            }
         } 
-    }
-    /*
-    post {
-        always {
-            junit 'test-results/junit.xml'
-        }
-    }
-    */
+    }    
 }
