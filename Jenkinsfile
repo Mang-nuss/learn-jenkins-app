@@ -10,6 +10,58 @@ pipeline {
 
     stages {
 
+
+
+    //     stage('Docker') {
+    //         steps {
+    //             sh 'docker build -t my-playwright .' //build this in the current dir.
+    //         }
+    //     }
+        // stage('w/o docker') {
+        //     steps {
+        //         sh '''
+        //             echo "Without Docker"
+        //             ls -latr
+        //             touch container-nope.txt
+        //         '''
+        //     }
+        // }
+        
+        //build with docker
+        
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:18-alpine'   
+                    reuseNode true
+                }
+            }
+            steps {
+                
+                sh '''
+                    echo "This time with Docker"
+                    ls -latr
+                    touch container-yeah.txt
+                    npm --version
+                    node --version
+                    npm ci
+                    npm run build
+                    ls -la
+                '''
+                
+/*
+                sh '''
+                    npx playwright install
+                    npm install serve
+                    node_modules/.bin/serve -s build &
+                    sleep 10
+                    npx playwright test
+                '''
+                */
+                //The server installaton can be done without the -g (global) tag
+            }
+        }
+        
         stage('AWS') {
             agent {
                 docker {
@@ -28,62 +80,14 @@ pipeline {
                     // some block
                     sh '''
                         aws --version
-                        echo "Hello for S3" > index.html
-                        aws s3 cp index.html s3://$AWS_S#_BUCKET/index.html
+                        aws s3 sync build s3://$AWS_S3_BUCKET
                     '''
                 }
+                //before: 
+                        //echo "Hello for S3" > index.html
+                        //aws s3 cp index.html s3://$AWS_S3_BUCKET/index.html
             }
         }
-
-    //     stage('Docker') {
-    //         steps {
-    //             sh 'docker build -t my-playwright .' //build this in the current dir.
-    //         }
-    //     }
-        // stage('w/o docker') {
-        //     steps {
-        //         sh '''
-        //             echo "Without Docker"
-        //             ls -latr
-        //             touch container-nope.txt
-        //         '''
-        //     }
-        // }
-        
-        //build with docker
-        /*
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:18-alpine'   
-                    reuseNode true
-                }
-            }
-            steps {
-                
-                sh '''
-                    echo "This time with Docker"
-                    ls -latr
-                    touch container-yeah.txt
-                    npm --version
-                    node --version
-                    npm ci
-                    npm run build
-                '''
-                
-
-                sh '''
-                    npx playwright install
-                    npm install serve
-                    node_modules/.bin/serve -s build &
-                    sleep 10
-                    npx playwright test
-                '''
-                
-                //The server installaton can be done without the -g (global) tag
-            }
-        }
-        */
 
         stage('Run Tests') {
             parallel {
