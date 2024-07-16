@@ -7,14 +7,28 @@ pipeline {
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
-    
+
     stages {
 
-        stage('Docker') {
+        stage('AWS') {
+            agent {
+                docker {
+                    image 'amazon/aws-cli'
+                }
+            }
             steps {
-                sh 'docker build -t my-playwright .' //build this in the current dir.
+                sh '''
+                    aws --version
+                '''
             }
         }
+    }
+
+    //     stage('Docker') {
+    //         steps {
+    //             sh 'docker build -t my-playwright .' //build this in the current dir.
+    //         }
+    //     }
         // stage('w/o docker') {
         //     steps {
         //         sh '''
