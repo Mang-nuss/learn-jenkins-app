@@ -116,6 +116,9 @@ pipeline {
                     node_modules/.bin/node-jq -r '.deploy_url' staging_output.json
                 '''
             }
+            script {
+                env.STAGING_URL = sh(script: "node_mmodules/.bin/node-jq -r '.deploy_url' staging_output.json", returnStdout: true)
+            }
         }
 
         stage('Staging E2E test') {
@@ -127,7 +130,7 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = 'TOFIX'
+                CI_ENVIRONMENT_URL = 'TOFIX' //soon should be STAGING URL
             }
 
             steps {
