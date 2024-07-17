@@ -5,7 +5,7 @@ pipeline {
 
         stage('build Docker image at night') {
             steps {
-                sh 'docker build -t my-playwright .' //build this in the current dir.
+                sh 'docker build -f ci/Dockerfile -t my-playwright .' //build this in the current dir.
             }
         }
     }
